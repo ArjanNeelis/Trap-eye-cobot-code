@@ -12,36 +12,38 @@ approach_magnet_4 = posx(100, -590, 350, 0, 180, 90)        # Above magnet place
 pick_magnet = posx(240, -400, 60, 0, 150, 90)       # Pick up position
 place_position_1 = posx(100, -500, 280, 0, 180, 90)     # Place position 1st magnet
 place_position_2 = posx(100, -590, 280, 0, 180, 90)     # Place position 2nd magnet
-
+# Speed and acceleration parameter
+v = 100
+a = 100
 
 def place_magnet_1():
-    movel(approach_magnet_1, v=100, a=100)
-    movel(approach_magnet_2, v=100, a=100)
-    movel(pick_magnet, v=100, a=100)
+    movel(approach_magnet_1, v=v, a=a)
+    movel(approach_magnet_2, v=v, a=a)
+    movel(pick_magnet, v=v, a=a)
     set_digital_output(suction_cup, ON)                   # Activate suctioncup
     wait(suck_time)
-    movel(approach_magnet_2, v=100, a=100)
-    movel(approach_magnet_1, v=100, a=100)
-    movel(approach_magnet_3, v=100, a=100)
-    movel(place_magnet_1, v=100, a=100)
+    movel(approach_magnet_2, v=v, a=a)
+    movel(approach_magnet_1, v=v, a=a)
+    movel(approach_magnet_3, v=v, a=a)
+    movel(place_magnet_1, v=v, a=a)
     set_digital_output(suction_cup, OFF)                  # Deactivate suctioncup
     wait(suck_time)
-    movel(approach_magnet_3, v=100, a=100)
+    movel(approach_magnet_3, v=v, a=a)
 
 
 def place_magnet_2():
-    movel(approach_magnet_1, v=100, a=100)
-    movel(approach_magnet_2, v=100, a=100)
-    movel(pick_magnet, v=100, a=100)
+    movel(approach_magnet_1, v=v, a=a)
+    movel(approach_magnet_2, v=v, a=a)
+    movel(pick_magnet, v=v, a=a)
     set_digital_output(suction_cup, ON)                   # Activate suctioncup
     wait(suck_time)
-    movel(approach_magnet_2, v=100, a=100)
-    movel(approach_magnet_1, v=100, a=100)
-    movel(approach_magnet_4, v=100, a=100)
-    movel(place_magnet_2, v=100, a=100)
+    movel(approach_magnet_2, v=v, a=a)
+    movel(approach_magnet_1, v=v, a=a)
+    movel(approach_magnet_4, v=v, a=a)
+    movel(place_magnet_2, v=v, a=a)
     set_digital_output(suction_cup, OFF)                  # Deactivate suctioncup
     wait(suck_time)
-    movel(approach_magnet_4, v=100, a=100)
+    movel(approach_magnet_4, v=v, a=a)
 
 
 def calib():
