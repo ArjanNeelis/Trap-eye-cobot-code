@@ -3,17 +3,20 @@ import pyfirmata
 from pyfirmata import util
 import time
 
+# ---- Set up communication with Arduino ----
 board = pyfirmata.Arduino('COM4')
-board.digital[3].mode = pyfirmata.OUTPUT
-board.digital[4].mode = pyfirmata.OUTPUT
-board.digital[5].mode = pyfirmata.OUTPUT
-board.digital[6].mode = pyfirmata.INPUT
-board.digital[7].mode = pyfirmata.INPUT
-board.digital[8].mode = pyfirmata.INPUT
-board.digital[9].mode = pyfirmata.INPUT
-board.digital[10].mode = pyfirmata.OUTPUT
-board.digital[11].mode = pyfirmata.OUTPUT
-board.digital[12].mode = pyfirmata.OUTPUT
+board.digital[2].mode = pyfirmata.OUTPUT    # Vacuum pump
+board.digital[3].mode = pyfirmata.OUTPUT    # Screwdriver
+board.digital[4].mode = pyfirmata.OUTPUT    # Linear actuator
+board.digital[5].mode = pyfirmata.OUTPUT    # Trapezium servo
+board.digital[6].mode = pyfirmata.OUTPUT    # Clamp servo
+board.digital[7].mode = pyfirmata.INPUT     # Magnet switch
+board.digital[8].mode = pyfirmata.INPUT     # Trapezium switch
+board.digital[9].mode = pyfirmata.INPUT     # Trap-eye switch
+board.digital[10].mode = pyfirmata.OUTPUT   # Start button
+board.digital[11].mode = pyfirmata.OUTPUT   # status LED green
+board.digital[12].mode = pyfirmata.OUTPUT   # status LED yellow
+board.digital[13].mode = pyfirmata.OUTPUT   # status LED red
 
 it = util.Iterator(board)
 it.start()
@@ -22,12 +25,6 @@ board.digital[6].enable_reporting()
 board.digital[7].enable_reporting()
 board.digital[8].enable_reporting()
 board.digital[9].enable_reporting()
-
-# ---- Settings for I/O ----
-suction_cup = 1     # Vacuum pump connected to digital_output 1
-suck_time = 1       # Number of seconds to wait after (de)activating the vacuumpump
-screwdriver = 2        # Screwdriver motor connected to digital_output 2
-# screw_time = 1       # Number of seconds to wait after (de)activating the screwdriver
 
 # ---- Coordinates for pick and place magnets ----
 approach_magnet_1 = posx(200, -400, 350, 0, 180, 90)        # Above magnet storage
@@ -38,7 +35,7 @@ pick_magnet = posx(240, -400, 60, 0, 150, 90)               # Pick up position
 place_position_1 = posx(100, -500, 280, 0, 180, 90)         # Place position 1st magnet
 place_position_2 = posx(100, -590, 280, 0, 180, 90)         # Place position 2nd magnet
 
-# ---- Coordinates for pick and place trapezium----
+# ---- Coordinates for pick and place trapezium ----
 approach_trapezium_1 = posx(200, -400, 350, 0, 180, 90)     # Above trapezium storage
 approach_trapezium_2 = posx(200, -400, 100, 0, 150, 90)     # Go up at an angle
 approach_trapezium_3 = posx(107.5, -545, 350, 0, 180, 90)   # Above trapezium place
@@ -59,18 +56,21 @@ place_screw = posx(90, -655, 260, 0, 180, 90)   # Place position trapezium
 v = 100
 a = 100
 
+# ---- timers for stuff ----
+suck_time = 1       # Number of seconds to wait after (de)activating the vacuumpump
+screw_time = 1       # Number of seconds to wait after (de)activating the screwdriver
 
 def place_magnet_1():
     movel(approach_magnet_1, v=v, a=a)
     movel(approach_magnet_2, v=v, a=a)
     movel(pick_magnet, v=v, a=a)
-    set_digital_output(suction_cup, ON)                   # Activate suction cup
+    board.digital[2].write(1)               # Activate suction cup
     wait(suck_time)
     movel(approach_magnet_2, v=v, a=a)
     movel(approach_magnet_1, v=v, a=a)
     movel(approach_magnet_3, v=v, a=a)
     movel(place_magnet_1, v=v, a=a)
-    set_digital_output(suction_cup, OFF)                  # Deactivate suction cup
+    board.digital[2].write(0)               # Deactivate suction cup
     wait(suck_time)
     movel(approach_magnet_3, v=v, a=a)
 
@@ -79,13 +79,13 @@ def place_magnet_2():
     movel(approach_magnet_1, v=v, a=a)
     movel(approach_magnet_2, v=v, a=a)
     movel(pick_magnet, v=v, a=a)
-    set_digital_output(suction_cup, ON)                   # Activate suction cup
+    board.digital[2].write(1)               # Activate suction cup
     wait(suck_time)
     movel(approach_magnet_2, v=v, a=a)
     movel(approach_magnet_1, v=v, a=a)
     movel(approach_magnet_4, v=v, a=a)
     movel(place_magnet_2, v=v, a=a)
-    set_digital_output(suction_cup, OFF)                  # Deactivate suction cup
+    board.digital[2].write(0)               # Deactivate suction cup
     wait(suck_time)
     movel(approach_magnet_4, v=v, a=a)
 
@@ -94,13 +94,13 @@ def place_trapezium_1():
     movel(approach_trapezium_1, v=v, a=a)
     movel(approach_trapezium_2, v=v, a=a)
     movel(pick_trapezium, v=v, a=a)
-    set_digital_output(suction_cup, ON)  # Activate suction cup
+    board.digital[2].write(1)               # Activate suction cup
     wait(suck_time)
     movel(approach_trapezium_2, v=v, a=a)
     movel(approach_trapezium_1, v=v, a=a)
     movel(approach_trapezium_3, v=v, a=a)
     movel(place_trapezium, v=v, a=a)
-    set_digital_output(suction_cup, OFF)  # Deactivate suction cup
+    board.digital[2].write(0)               # Deactivate suction cup
     wait(suck_time)
     movel(approach_trapezium_3, v=v, a=a)
 
@@ -109,16 +109,16 @@ def place_screw_1():
     movel(approach_screw_1, v=v, a=a)
     movej(approach_screw_2, v=v, a=a)
     movel(approach_screw_3, v=v, a=a)
-    set_digital_output(screwdriver, ON)  # Activate screwdriver
+    board.digital[3].write(1)               # Activate screwdriver
     movel(pick_screw, v=v, a=a)
-    set_digital_output(screwdriver, OFF)  # Deactivate screwdriver
+    board.digital[2].write(0)               # Deactivate screwdriver
     movel(approach_screw_3, v=v, a=a)
     movel(approach_screw_1j, v=v, a=a)
     movel(approach_screw_4, v=v, a=a)
     movel(approach_screw_5, v=v, a=a)
-    set_digital_output(screwdriver, ON)  # Activate screwdriver
+    board.digital[2].write(1)               # Activate screwdriver
     movel(place_screw, v=v, a=a)
-    set_digital_output(screwdriver, OFF)  # Deactivate screwdriver
+    board.digital[2].write(0)               # Deactivate screwdriver
     movel(approach_screw_5, v=v, a=a)
     movel(approach_screw_4, v=v, a=a)
 
