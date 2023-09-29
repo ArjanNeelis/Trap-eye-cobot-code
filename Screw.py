@@ -6,7 +6,7 @@ screwdriver = 2        # Screwdriver motor connected to digital_output 2
 #screw_time = 1       # Number of seconds to wait after (de)activating the screwdriver
 # Coordinates for pick and place
 approach_screw_1 = posx(100, -400, 350, 0, 180, 90)     # Start position
-approach_screw_1j = (104.04, -7.73, -95.47, 180.0, 76.80, 14.04)
+approach_screw_1j = posj(104.04, -7.73, -95.47, 180.0, 76.80, 14.04)
 approach_screw_2 = posj(86.14, -13.48, -110.15, 267.86, 93.21, -213.69)      # Rotated tool
 approach_screw_3 = posx(200, -300, 350, 180, -90, 90)       # Above screw feeder
 approach_screw_4 = posx(125, -400, 230, 0, 180, 90)     # Move around TRAP-EYE
