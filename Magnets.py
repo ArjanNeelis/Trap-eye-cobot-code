@@ -1,8 +1,8 @@
 from DRCF import *
 
 # Code for picking&placing magnets
-# Settings for suctioncup
-suction_cup = 1     # Vacuumpump connected to digital_output 1
+# Settings for suction cup
+suction_cup = 1     # Vacuum pump connected to digital_output 1
 suck_time = 1       # Number of seconds to wait after (de)activating the vacuumpump
 # Coordinates for pick and place
 approach_magnet_1 = posx(200, -400, 350, 0, 180, 90)        # Above magnet storage
@@ -15,6 +15,7 @@ place_position_2 = posx(100, -590, 280, 0, 180, 90)     # Place position 2nd mag
 # Speed and acceleration parameter
 v = 100
 a = 100
+
 
 def place_magnet_1():
     movel(approach_magnet_1, v=v, a=a)
@@ -46,13 +47,7 @@ def place_magnet_2():
     movel(approach_magnet_4, v=v, a=a)
 
 
-def calib():
+def calibration():
     movej(posj(0.0, 0.0, 0.0, 0.0, 0.0, 0.0), v=40, a=100)      # Home position needed for accuracy calibration
     movej(posj(116.57, -12.5, -89.73, 180.0, 77.76, 26.57), v=40, a=100)        # First position as joint values
 
-
-calib()
-
-if get_digital_input(1) == 0:       # Wait for a signal to start placing magnets
-    place_magnet_1()
-    place_magnet_2()
