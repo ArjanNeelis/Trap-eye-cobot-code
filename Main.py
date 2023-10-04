@@ -4,28 +4,40 @@ from pyfirmata import util
 import time
 
 # ---- Set up communication with Arduino ----
-board = pyfirmata.Arduino('COM4')
-board.digital[2].mode = pyfirmata.OUTPUT    # Vacuum pump
-board.digital[3].mode = pyfirmata.OUTPUT    # Screwdriver
-board.digital[4].mode = pyfirmata.OUTPUT    # Linear actuator
-board.digital[5].mode = pyfirmata.OUTPUT    # Trapezium servo
-board.digital[6].mode = pyfirmata.OUTPUT    # Clamp servo
-board.digital[7].mode = pyfirmata.INPUT     # Magnet switch
-board.digital[8].mode = pyfirmata.INPUT     # Trapezium switch
-board.digital[9].mode = pyfirmata.INPUT     # Trap-eye switch
-board.digital[10].mode = pyfirmata.INPUT   # Start button
-# board.digital[22].mode = pyfirmata.OUTPUT   # status LED green
-# board.digital[24].mode = pyfirmata.OUTPUT   # status LED yellow
-# board.digital[26].mode = pyfirmata.OUTPUT   # status LED red
-# board.digital[28].mode = pyfirmata.OUTPUT   # status LED blue
+board = pyfirmata.Arduino('COM4')           # The port Arduino and laptop share (visible in Arduino IDE)
+linear_out = 2
+linear_speed = 3
+linear_in = 4
+clamp_servo = 5
+magnet_switch = 6
+trapezium_switch = 7
+trapeye_switch = 8
+start_button = 9
+vacuum_pump = 10
+screwdriver = 11
+red_LED = 12
+green_LED = 13
+
+board.digital[linear_out].mode = pyfirmata.OUTPUT       # Linear actuator
+board.digital[linear_speed].mode = pyfirmata.OUTPUT     # Linear actuator (PWM)
+board.digital[linear_out].mode = pyfirmata.OUTPUT       # Linear actuator
+board.digital[clamp_servo].mode = pyfirmata.OUTPUT      # Clamp servo (PWM)
+board.digital[magnet_switch].mode = pyfirmata.INPUT     # Magnet switch
+board.digital[trapezium_switch].mode = pyfirmata.INPUT  # Trapezium switch
+board.digital[trapeye_switch].mode = pyfirmata.INPUT    # Trap-eye switch
+board.digital[start_button].mode = pyfirmata.INPUT      # Start button
+board.digital[vacuum_pump].mode = pyfirmata.OUTPUT      # Vacuum pump
+board.digital[screwdriver].mode = pyfirmata.OUTPUT      # Screwdriver
+board.digital[red_LED].mode = pyfirmata.OUTPUT          # status LED
+board.digital[green_LED].mode = pyfirmata.OUTPUT        # status LED
 
 it = util.Iterator(board)
 it.start()
 
-board.digital[7].enable_reporting()
-board.digital[8].enable_reporting()
-board.digital[9].enable_reporting()
-board.digital[10].enable_reporting()
+board.digital[magnet_switch].enable_reporting()         # Enable reading this port
+board.digital[trapezium_switch].enable_reporting()      # Enable reading this port
+board.digital[trapeye_switch].enable_reporting()        # Enable reading this port
+board.digital[start_button].enable_reporting()          # Enable reading this port
 
 # ---- Coordinates for pick and place magnets ----
 approach_magnet_1 = posx(200, -400, 350, 0, 180, 90)        # Above magnet storage
@@ -58,8 +70,8 @@ v = 100
 a = 100
 
 # ---- timers for stuff ----
-suck_time = 1       # Number of seconds to wait after (de)activating the vacuumpump
-screw_time = 1       # Number of seconds to wait after (de)activating the screwdriver
+suck_time = 1       # Number of seconds to wait after (de)activating the vacuum pump
+screw_time = 1      # Number of seconds to wait after (de)activating the screwdriver
 
 # ---- Start with all variables False ----
 magnets_placed = False
@@ -71,31 +83,37 @@ prev_button_state = False
 
 
 def place_magnet_1():
+    board.digital[linear_out].write(1)      # Retract linear actuator
     movel(approach_magnet_1, v=v, a=a)
     movel(approach_magnet_2, v=v, a=a)
     movel(pick_magnet, v=v, a=a)
-    board.digital[2].write(1)               # Activate suction cup
+    board.digital[vacuum_pump].write(1)     # Activate suction cup
     wait(suck_time)
     movel(approach_magnet_2, v=v, a=a)
+    board.digital[linear_out].write(0)      # Stop linear actuator retracting
+    board.digital[linear_out].write(1)      # Linear actuator out to give new magnet
     movel(approach_magnet_1, v=v, a=a)
     movel(approach_magnet_3, v=v, a=a)
     movel(place_magnet_1, v=v, a=a)
-    board.digital[2].write(0)               # Deactivate suction cup
+    board.digital[vacuum_pump].write(0)     # Deactivate suction cup
     wait(suck_time)
     movel(approach_magnet_3, v=v, a=a)
 
 
 def place_magnet_2():
+    board.digital[linear_out].write(1)      # Retract linear actuator
     movel(approach_magnet_1, v=v, a=a)
     movel(approach_magnet_2, v=v, a=a)
     movel(pick_magnet, v=v, a=a)
-    board.digital[2].write(1)               # Activate suction cup
+    board.digital[vacuum_pump].write(1)     # Activate suction cup
     wait(suck_time)
     movel(approach_magnet_2, v=v, a=a)
+    board.digital[linear_out].write(0)      # Stop linear actuator retracting
+    board.digital[linear_out].write(1)      # Linear actuator extending to give new magnet
     movel(approach_magnet_1, v=v, a=a)
     movel(approach_magnet_4, v=v, a=a)
     movel(place_magnet_2, v=v, a=a)
-    board.digital[2].write(0)               # Deactivate suction cup
+    board.digital[vacuum_pump].write(0)     # Deactivate suction cup
     wait(suck_time)
     movel(approach_magnet_4, v=v, a=a)
 
@@ -104,13 +122,13 @@ def place_trapezium_1():
     movel(approach_trapezium_1, v=v, a=a)
     movel(approach_trapezium_2, v=v, a=a)
     movel(pick_trapezium, v=v, a=a)
-    board.digital[2].write(1)               # Activate suction cup
+    board.digital[vacuum_pump].write(1)     # Activate suction cup
     wait(suck_time)
     movel(approach_trapezium_2, v=v, a=a)
     movel(approach_trapezium_1, v=v, a=a)
     movel(approach_trapezium_3, v=v, a=a)
     movel(place_trapezium, v=v, a=a)
-    board.digital[2].write(0)               # Deactivate suction cup
+    board.digital[vacuum_pump].write(0)     # Deactivate suction cup
     wait(suck_time)
     movel(approach_trapezium_3, v=v, a=a)
 
@@ -119,34 +137,34 @@ def place_screw_1():
     movel(approach_screw_1, v=v, a=a)
     movej(approach_screw_2, v=v, a=a)
     movel(approach_screw_3, v=v, a=a)
-    board.digital[3].write(1)               # Activate screwdriver
+    board.digital[screwdriver].write(1)     # Activate screwdriver
     movel(pick_screw, v=v, a=a)
-    board.digital[2].write(0)               # Deactivate screwdriver
+    board.digital[screwdriver].write(0)     # Deactivate screwdriver
     movel(approach_screw_3, v=v, a=a)
     movel(approach_screw_1j, v=v, a=a)
     movel(approach_screw_4, v=v, a=a)
     movel(approach_screw_5, v=v, a=a)
-    board.digital[2].write(1)               # Activate screwdriver
+    board.digital[screwdriver].write(1)     # Activate screwdriver
     movel(place_screw, v=v, a=a)
     # Maybe play with force control to feel is the screw is all the way in
     # The screwdriver does not have a slip clutch
-    board.digital[2].write(0)               # Deactivate screwdriver
+    board.digital[screwdriver].write(0)     # Deactivate screwdriver
     movel(approach_screw_5, v=v, a=a)
     movel(approach_screw_4, v=v, a=a)
 
 
 def calibration():
     movej(posj(0.0, 0.0, 0.0, 0.0, 0.0, 0.0), v=40, a=100)      # Home position needed for accuracy calibration
-    movej(posj(116.57, -12.5, -89.73, 180.0, 77.76, 26.57), v=40, a=100)    # First position as joint value
+    movej(posj(116.57, -12.5, -89.73, 180.0, 77.76, 26.57), v=40, a=100)    # First position after calibration
 
 
 # ---- Main code ----
-# board.digital[24].write(1)
+board.digital[green_LED].write(1)
 calibration()
-# board.digital[24].write(0)
+board.digital[green_LED].write(0)
 
 while not start:
-    button_state = board.digital[10].read()
+    button_state = board.digital[start_button].read()
     if button_state != prev_button_state:
         if button_state:
             print('Button pressed')
@@ -159,22 +177,25 @@ while not start:
     prev_button_state = button_state
 
 while start:
-    magnet_switch = board.digital[6].read()
-    trapezium_switch = board.digital[7].read()
-    trap_eye_switch = board.digital[8].read()
-    start_button = board.digital[9].read()
+    magnet_state = board.digital[magnet_switch].read()
+    trapezium_state = board.digital[trapezium_switch].read()
+    trapeye_state = board.digital[trapeye_switch].read()
+    start_button_state = board.digital[start_button].read()
     print('Inputs read')
     time.sleep(0.1)
 
-    if magnet_switch and not magnets_placed:
+    if magnet_state and not magnets_placed:
         print('Placing magnet 1...')
         place_magnet_1()
         print('Magnet 1 placed')
+        while not magnet_switch:
+            magnet_switch_state = board.digital[magnet_switch].read()
+            wait(0.5)
         print('Placing magnet 2...')
         place_magnet_2()
         print('Magnet 2 placed')
         magnets_placed = True
-    elif trapezium_switch and magnets_placed and not trapezium_placed:
+    elif trapezium_state and magnets_placed and not trapezium_placed:
         print('Placing trapezium...')
         place_trapezium_1()
         print('Trapezium placed')
@@ -191,8 +212,19 @@ while start:
         start = False
     else:
         if not magnets_placed and not magnet_switch:
+            board.digital[linear_in].write(0)
+            board.digital[linear_out].write(1)
+            while not magnet_switch:
+                board.digital[magnet_switch].read()
+                print('Waiting for magnet or magnets empty', sep=' ', end='', flush=True)
+                wait(0.1)
+                print(sep=' ', end='\r')
+                wait(1)
+            board.digital[linear_out].write(0)
+            board.digital[linear_in].write(1)
             print('Magnet storage empty')
         elif not trapezium_placed and not trapezium_switch:
             print('Trapezium storage empty')
+            wait(1)
         else:
             print('Unexpected Error')
