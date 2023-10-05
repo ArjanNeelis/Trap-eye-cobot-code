@@ -20,7 +20,7 @@ screwdriver = 11
 red_LED = 12
 green_LED = 13
 
-board.digital[linear_out].mode = pyfirmata.OUTPUT       # Linear actuator
+board.digital[linear_in].mode = pyfirmata.OUTPUT       # Linear actuator
 board.digital[linear_speed].mode = pyfirmata.PWM        # Linear actuator (PWM)
 board.digital[linear_out].mode = pyfirmata.OUTPUT       # Linear actuator
 board.digital[clamp_servo].mode = pyfirmata.SERVO       # Clamp servo (PWM)
@@ -42,20 +42,18 @@ board.digital[trapeye_switch].enable_reporting()        # Enable reading this po
 board.digital[start_button].enable_reporting()          # Enable reading this port
 
 # ---- Coordinates for pick and place magnets ----
-approach_magnet_1 = posx(200, -400, 350, 0, 180, 90)        # Above magnet storage
-approach_magnet_2 = posx(200, -400, 100, 0, 150, 90)        # Angled above magnet
-approach_magnet_3 = posx(100, -500, 350, 0, 180, 90)        # Above magnet place 1
-approach_magnet_4 = posx(100, -590, 350, 0, 180, 90)        # Above magnet place 2
-pick_magnet = posx(240, -400, 60, 0, 150, 90)               # Pick up position
-place_position_1 = posx(100, -500, 280, 0, 180, 90)         # Place position 1st magnet
-place_position_2 = posx(100, -590, 280, 0, 180, 90)         # Place position 2nd magnet
+approach_magnet_1 = posx(346, -297, 350, 0, 180, 90)        # Above magnet storage
+approach_magnet_2 = posx(-15, -561, 370, 0, -150, 0)          # Above magnet place 1 angled
+approach_magnet_3 = posx(-15, -546, 370, 0, -150, 0)        # Above magnet place 2 angled
+pick_magnet = posx(346, -297, 111, 0, 180, 90)               # Pick up position
+place_position_1 = posx(-15, -561, 350, 0, -150, 0)         # Place position 1st magnet
+place_position_2 = posx(-15, -646, 350, 0, -150, 0)         # Place position 2nd magnet
 
 # ---- Coordinates for pick and place trapezium ----
 approach_trapezium_1 = posx(200, -400, 350, 0, 180, 90)     # Above trapezium storage
-approach_trapezium_2 = posx(200, -400, 100, 0, 150, 90)     # Go up at an angle
-approach_trapezium_3 = posx(107.5, -545, 350, 0, 180, 90)   # Above trapezium place
-pick_trapezium = posx(240, -600, 60, 0, 150, 90)            # Pick up position
-place_trapezium = posx(107.5, -545, 280, 0, 180, 90)        # Place position trapezium
+approach_trapezium_2 = posx(107.5, -545, 350, 0, 180, 90)   # Above trapezium place
+pick_trapezium = posx(255, -342, 156, 0, 180, 90)            # Pick up position
+place_trapezium = posx(-15, -603.5, 350, 0, -150, 0)        # Place position trapezium
 
 # ---- Coordinates for pick and place screw ----
 approach_screw_1 = posx(100, -400, 350, 0, 180, 90)         # Start position
@@ -86,54 +84,54 @@ prev_button_state = False
 
 
 def place_magnet_1():
-    board.digital[linear_out].write(1)      # Retract linear actuator
+    board.digital[linear_out].write(0)      # Stop linear actuator extending
+    board.digital[linear_in].write(1)       # Retract linear actuator
+    board.digital[linear_speed].write(1)
     movel(approach_magnet_1, v=v, a=a)
-    movel(approach_magnet_2, v=v, a=a)
     movel(pick_magnet, v=v, a=a)
     board.digital[vacuum_pump].write(1)     # Activate suction cup
     wait(suck_time)
-    movel(approach_magnet_2, v=v, a=a)
-    board.digital[linear_out].write(0)      # Stop linear actuator retracting
-    board.digital[linear_out].write(1)      # Linear actuator out to give new magnet
     movel(approach_magnet_1, v=v, a=a)
-    movel(approach_magnet_3, v=v, a=a)
+    board.digital[linear_in].write(0)       # Stop linear actuator retracting
+    board.digital[linear_out].write(1)      # Linear actuator out to give new magnet
+    board.digital[linear_speed].write(1)
+    movel(approach_magnet_2, v=v, a=a)
     movel(place_position_1, v=v, a=a)
     board.digital[vacuum_pump].write(0)     # Deactivate suction cup
     wait(suck_time)
-    movel(approach_magnet_3, v=v, a=a)
+    movel(approach_magnet_2, v=v, a=a)
 
 
 def place_magnet_2():
-    board.digital[linear_out].write(1)      # Retract linear actuator
+    board.digital[linear_out].write(0)      # Stop linear actuator extending
+    board.digital[linear_in].write(1)       # Retract linear actuator
+    board.digital[linear_speed].write(1)
     movel(approach_magnet_1, v=v, a=a)
-    movel(approach_magnet_2, v=v, a=a)
     movel(pick_magnet, v=v, a=a)
     board.digital[vacuum_pump].write(1)     # Activate suction cup
     wait(suck_time)
-    movel(approach_magnet_2, v=v, a=a)
-    board.digital[linear_out].write(0)      # Stop linear actuator retracting
-    board.digital[linear_out].write(1)      # Linear actuator extending to give new magnet
     movel(approach_magnet_1, v=v, a=a)
-    movel(approach_magnet_4, v=v, a=a)
+    board.digital[linear_in].write(0)       # Stop linear actuator retracting
+    board.digital[linear_out].write(1)      # Linear actuator out to give new magnet
+    board.digital[linear_speed].write(1)
+    movel(approach_magnet_3, v=v, a=a)
     movel(place_position_2, v=v, a=a)
     board.digital[vacuum_pump].write(0)     # Deactivate suction cup
     wait(suck_time)
-    movel(approach_magnet_4, v=v, a=a)
+    movel(approach_magnet_3, v=v, a=a)
 
 
 def place_trapezium_1():
     movel(approach_trapezium_1, v=v, a=a)
-    movel(approach_trapezium_2, v=v, a=a)
     movel(pick_trapezium, v=v, a=a)
     board.digital[vacuum_pump].write(1)     # Activate suction cup
     wait(suck_time)
-    movel(approach_trapezium_2, v=v, a=a)
     movel(approach_trapezium_1, v=v, a=a)
-    movel(approach_trapezium_3, v=v, a=a)
+    movel(approach_trapezium_2, v=v, a=a)
     movel(place_trapezium, v=v, a=a)
     board.digital[vacuum_pump].write(0)     # Deactivate suction cup
     wait(suck_time)
-    movel(approach_trapezium_3, v=v, a=a)
+    movel(approach_trapezium_2, v=v, a=a)
 
 
 def place_screw_1():
@@ -201,8 +199,9 @@ while True:
             print('Placing magnet 1...')
             place_magnet_1()
             print('Magnet 1 placed')
-            while not magnet_switch:
-                magnet_switch_state = board.digital[magnet_switch].read()
+            magnet_state = board.digital[magnet_switch].read()
+            while not magnet_state:
+                magnet_state = board.digital[magnet_switch].read()
                 wait(0.5)
             print('Placing magnet 2...')
             place_magnet_2()
