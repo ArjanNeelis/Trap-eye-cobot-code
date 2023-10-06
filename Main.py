@@ -66,8 +66,8 @@ pick_screw = posx(200, -300, 300, 0, 90, -90)               # Pick up position
 place_screw = posx(90, -655, 260, 0, 180, 90)               # Place position trapezium
 
 # ---- Speed and acceleration parameter ----
-v = 100
-a = 100
+v = 40
+a = 50
 
 # ---- timers for stuff ----
 suck_time = 1       # Number of seconds to wait after (de)activating the vacuum pump
@@ -162,8 +162,8 @@ def clamping():
 
 
 def calibration():
-    movej(posj(0.0, 0.0, 0.0, 0.0, 0.0, 0.0), v=40, a=100)      # Home position needed for accuracy calibration
-    movej(posj(116.57, -12.5, -89.73, 180.0, 77.76, 26.57), v=40, a=100)    # First position after calibration
+    movej(posj(0.0, 0.0, 0.0, 0.0, 0.0, 0.0), v=80, a=100)      # Home position needed for accuracy calibration
+    movej(posj(139.4, -13.7, -88.2, 180.0, 78.1, 49.4), v=80, a=100)    # First position after calibration
 
 
 # ---- Main code ----
