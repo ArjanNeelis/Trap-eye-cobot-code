@@ -1,11 +1,10 @@
 from DRCF import *
 import pyfirmata
 from pyfirmata import util
-import time
 # import Vision
 
 # ---- Set up communication with Arduino ----
-port = 'COM5'                           # Port used to communicate with Arduino (Visible in Arduino IDE)
+port = 'COM4'                           # Port used to communicate with Arduino (Visible in Arduino IDE)
 board = pyfirmata.Arduino(port)         # The connection between Arduino and laptop
 linear_out = 2
 linear_speed = 3
@@ -69,7 +68,7 @@ place_screw = posx(90, -655, 260, 0, 180, 90)               # Place position tra
 v = 40
 a = 50
 
-# ---- timers for stuff ----
+# ---- Timers for stuff ----
 suck_time = 1       # Number of seconds to wait after (de)activating the vacuum pump
 screw_time = 1      # Number of seconds to wait after (de)activating the screwdriver
 
@@ -193,7 +192,7 @@ while True:
         trapeye_state = board.digital[trapeye_switch].read()
         start_button_state = board.digital[start_button].read()
         print('Inputs read')
-        time.sleep(0.1)
+        wait(1)
 
         if magnet_state and not magnets_placed:
             print('Placing magnet 1...')
