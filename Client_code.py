@@ -70,9 +70,10 @@ def move_linear_out():
 
 
 def clamping():
-    board.digital[clamp_servo].write(0)         # Press on the magnets
-    board.digital[clamp_servo].write(39)        # Position for photo background
-    board.digital[clamp_servo].write(100)       # Retreat to give robot more space
+    print('Clamped')
+    # board.digital[clamp_servo].write(0)         # Press on the magnets
+    # board.digital[clamp_servo].write(39)        # Position for photo background
+    # board.digital[clamp_servo].write(100)       # Retreat to give robot more space
 
 
 # ---- Main code ----
@@ -187,31 +188,31 @@ while True:
             print('Placing screw...')
             msg = "place_screw_1()"
             client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
-            res, rx_data = client_socket_read(sock)                     # Receives data from the server
-            rx_msg = rx_data.decode("utf-8")
-            exec(rx_msg)                                                # Activate screwdriver
-            msg = "screwdriver on"
-            client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
-            res, rx_data = client_socket_read(sock)                     # Receives data from the server
-            rx_msg = rx_data.decode("utf-8")
-            exec(rx_msg)                                                # Activate screwdriver
-            msg = "screwdriver off"
-            client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
-            res, rx_data = client_socket_read(sock)                     # Receives data from the server
-            rx_msg = rx_data.decode("utf-8")
-            exec(rx_msg)                                                # Clamping the magnets and trapezium
-            msg = "Clamping"
-            client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
-            res, rx_data = client_socket_read(sock)                     # Receives data from the server
-            rx_msg = rx_data.decode("utf-8")
-            exec(rx_msg)                                                # Activate screwdriver
-            msg = "screwdriver on"
-            client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
-            res, rx_data = client_socket_read(sock)                     # Receives data from the server
-            rx_msg = rx_data.decode("utf-8")
-            exec(rx_msg)                                                # Activate screwdriver
-            msg = "screwdriver off"
-            client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
+            # res, rx_data = client_socket_read(sock)                     # Receives data from the server
+            # rx_msg = rx_data.decode("utf-8")
+            # exec(rx_msg)                                                # Activate screwdriver
+            # msg = "screwdriver on"
+            # client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
+            # res, rx_data = client_socket_read(sock)                     # Receives data from the server
+            # rx_msg = rx_data.decode("utf-8")
+            # exec(rx_msg)                                                # Activate screwdriver
+            # msg = "screwdriver off"
+            # client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
+            # res, rx_data = client_socket_read(sock)                     # Receives data from the server
+            # rx_msg = rx_data.decode("utf-8")
+            # exec(rx_msg)                                                # Clamping the magnets and trapezium
+            # msg = "Clamping"
+            # client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
+            # res, rx_data = client_socket_read(sock)                     # Receives data from the server
+            # rx_msg = rx_data.decode("utf-8")
+            # exec(rx_msg)                                                # Activate screwdriver
+            # msg = "screwdriver on"
+            # client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
+            # res, rx_data = client_socket_read(sock)                     # Receives data from the server
+            # rx_msg = rx_data.decode("utf-8")
+            # exec(rx_msg)                                                # Activate screwdriver
+            # msg = "screwdriver off"
+            # client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
             res, rx_data = client_socket_read(sock)                     # Receives data from the server
             rx_msg = rx_data.decode("utf-8")
             print(rx_msg)                                               # Screw placed successfully
