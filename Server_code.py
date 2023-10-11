@@ -7,18 +7,18 @@ state = server_socket_state(sock)
 
 # ---- Coordinates for pick and place magnets ----
 approach_magnet_1 = posx(348, -296.5, 400, 0, 180, 90)          # Above magnet storage
-approach_magnet_2 = posx(-15, -560, 400, 0, -149, 0)            # Above magnet place 1 angled
-approach_magnet_3 = posx(-14.75, -645.25, 400, 0, -149, 0)      # Above magnet place 2 angled
-pick_magnet = posx(347, -296.5, 111, 0, 180, 90)                # Pick up position
-place_position_1a = posx(-15, -560, 350, 0, -149, 0)            # Place position 1st magnet
-place_position_1b = posx(-15, -559.5, 350, 0, -149, 0)          # Place position 1st magnet
-place_position_2a = posx(-14.75, -645.25, 351, 0, -149, 0)      # Place position 2nd magnet
-place_position_2b = posx(-14.75, -645.75, 351, 0, -149, 0)      # Place position 2nd magnet
+approach_magnet_2 = posx(-15, -560, 400, 0, -150, 0)            # Above magnet place 1 angled
+approach_magnet_3 = posx(-15.5, -645.25, 400, 0, -149, 0)      # Above magnet place 2 angled
+pick_magnet = posx(347, -298, 112, 0, 180, 90)                # Pick up position
+place_position_1a = posx(-15, -560, 350, 0, -150, 0)            # Place position 1st magnet
+place_position_1b = posx(-15, -559, 350, 0, -150, 0)          # Place position 1st magnet
+place_position_2a = posx(-15.5, -645.25, 351, 0, -150, 0)      # Place position 2nd magnet
+place_position_2b = posx(-15.5, -646.25, 351, 0, -150, 0)      # Place position 2nd magnet
 
 # ---- Coordinates for pick and place trapezium ----
-approach_trapezium_1 = posx(253, -342, 400, 0, 180, 90)         # Above trapezium storage
+approach_trapezium_1 = posx(253, -343, 400, 0, 180, 90)         # Above trapezium storage
 approach_trapezium_2 = posx(-7, -603, 400, 0, -150, 0)          # Above trapezium place
-pick_trapezium = posx(253, -342, 156, 0, 180, 90)               # Pick up position
+pick_trapezium = posx(253, -343, 156, 0, 180, 90)               # Pick up position
 place_trapezium = posx(-7, -603, 350, 0, -150, 0)               # Place position trapezium
 
 # ---- Coordinates for pick and place screw ----
