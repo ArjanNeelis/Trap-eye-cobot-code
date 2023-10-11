@@ -6,28 +6,30 @@ sock = server_socket_open(port)
 state = server_socket_state(sock)
 
 # ---- Coordinates for pick and place magnets ----
-approach_magnet_1 = posx(346.5, -297, 400, 0, 180, 90)          # Above magnet storage
-approach_magnet_2 = posx(-16, -559.5, 400, 0, -150, 0)          # Above magnet place 1 angled
-approach_magnet_3 = posx(-16, -645.5, 400, 0, -150, 0)          # Above magnet place 2 angled
-pick_magnet = posx(346.5, -297, 111, 0, 180, 90)                # Pick up position
-place_position_1 = posx(-16, -559.5, 350, 0, -150, 0)           # Place position 1st magnet
-place_position_2 = posx(-16, -645.5, 350, 0, -150, 0)           # Place position 2nd magnet
+approach_magnet_1 = posx(348, -296.5, 400, 0, 180, 90)          # Above magnet storage
+approach_magnet_2 = posx(-15, -560, 400, 0, -149, 0)            # Above magnet place 1 angled
+approach_magnet_3 = posx(-14.75, -645.25, 400, 0, -149, 0)      # Above magnet place 2 angled
+pick_magnet = posx(347, -296.5, 111, 0, 180, 90)                # Pick up position
+place_position_1a = posx(-15, -560, 350, 0, -149, 0)            # Place position 1st magnet
+place_position_1b = posx(-15, -559.5, 350, 0, -149, 0)          # Place position 1st magnet
+place_position_2a = posx(-14.75, -645.25, 351, 0, -149, 0)      # Place position 2nd magnet
+place_position_2b = posx(-14.75, -645.75, 351, 0, -149, 0)      # Place position 2nd magnet
 
 # ---- Coordinates for pick and place trapezium ----
 approach_trapezium_1 = posx(253, -342, 400, 0, 180, 90)         # Above trapezium storage
-approach_trapezium_2 = posx(-8, -602.5, 400, 0, -150, 0)        # Above trapezium place
+approach_trapezium_2 = posx(-7, -603, 400, 0, -150, 0)          # Above trapezium place
 pick_trapezium = posx(253, -342, 156, 0, 180, 90)               # Pick up position
-place_trapezium = posx(-8, -602.5, 350, 0, -150, 0)             # Place position trapezium
+place_trapezium = posx(-7, -603, 350, 0, -150, 0)               # Place position trapezium
 
 # ---- Coordinates for pick and place screw ----
-approach_screw_1 = posx(100, -400, 350, 0, 180, 90)         # Start position
+approach_screw_1 = posx(100, -400, 350, 0, 180, 90)             # Start position
 approach_screw_1j = posj(104.04, -7.73, -95.47, 180.0, 76.80, 14.04)
 approach_screw_2 = posj(86.14, -13.48, -110.15, 267.86, 93.21, -213.69)  # Rotated tool
-approach_screw_3 = posx(200, -300, 350, 180, -90, 90)       # Above screw feeder
-approach_screw_4 = posx(125, -400, 230, 0, 180, 90)         # Move around TRAP-EYE
-approach_screw_5 = posx(125, -655, 230, 0, 180, 90)         # Line up with screw hole
-pick_screw = posx(200, -300, 300, 0, 90, -90)               # Pick up position
-place_screw = posx(90, -655, 260, 0, 180, 90)               # Place position trapezium
+approach_screw_3 = posx(200, -300, 350, 180, -90, 90)           # Above screw feeder
+approach_screw_4 = posx(125, -400, 230, 0, 180, 90)             # Move around TRAP-EYE
+approach_screw_5 = posx(125, -655, 230, 0, 180, 90)             # Line up with screw hole
+pick_screw = posx(200, -300, 300, 0, 90, -90)                   # Pick up position
+place_screw = posx(90, -655, 260, 0, 180, 90)                   # Place position trapezium
 
 # ---- Speed and acceleration parameter ----
 v = 100
@@ -59,7 +61,8 @@ def place_magnet_1():
     rx_msg = rx_data.decode("utf-8")
     print(rx_msg)
     movel(approach_magnet_2, v=v, a=a)
-    movel(place_position_1, v=v, a=a)
+    movel(place_position_1a, v=v, a=a)
+    movel(place_position_1b, v=v, a=a)
     msg = "board.digital[vacuum_pump].write(0)"             # Deactivate suction cup
     server_socket_write(sock, msg.encode("utf-8"))
     res, rx_data = server_socket_read(sock)                 # Expecting 'received message'
@@ -70,7 +73,7 @@ def place_magnet_1():
 
 
 def place_magnet_2():
-    msg = "move_linear_in()"                                  # Retract linear actuator
+    msg = "move_linear_in()"                                # Retract linear actuator
     server_socket_write(sock, msg.encode("utf-8"))
     res, rx_data = server_socket_read(sock)                 # Expecting 'received message'
     rx_msg = rx_data.decode("utf-8")
@@ -84,13 +87,14 @@ def place_magnet_2():
     print(rx_msg)
     wait(suck_time)
     movel(approach_magnet_1, v=v, a=a)
-    msg = "move_linear_out()"                                 # Extend linear actuator
+    msg = "move_linear_out()"                               # Extend linear actuator
     server_socket_write(sock, msg.encode("utf-8"))
     res, rx_data = server_socket_read(sock)                 # Expecting 'received message'
     rx_msg = rx_data.decode("utf-8")
     print(rx_msg)
     movel(approach_magnet_3, v=v, a=a)
-    movel(place_position_2, v=v, a=a)
+    movel(place_position_2a, v=v, a=a)
+    movel(place_position_2b, v=v, a=a)
     msg = "board.digital[vacuum_pump].write(0)"             # Deactivate suction cup
     server_socket_write(sock, msg.encode("utf-8"))
     res, rx_data = server_socket_read(sock)                 # Expecting 'received message'
