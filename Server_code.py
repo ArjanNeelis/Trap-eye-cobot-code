@@ -28,7 +28,13 @@ approach_screw_2 = posj(86.14, -13.48, -110.15, 267.86, 93.21, -213.69)  # Rotat
 approach_screw_3 = posx(200, -300, 350, 180, -90, 90)           # Above screw feeder
 approach_screw_4 = posx(125, -400, 230, 0, 180, 90)             # Move around TRAP-EYE
 approach_screw_5 = posx(125, -655, 230, 0, 180, 90)             # Line up with screw hole
-pick_screw = posx(200, -300, 300, 0, 90, -90)                   # Pick up position
+pick_screw_1 = posx(240, -265.5, 225, 180, -90, 90)             # Pick up position
+pick_screw_2 = posx(250, -265.5, 225, 180, -90, 90)             # Pick up position
+pick_screw_3 = posx(260, -265.5, 225, 180, -90, 90)             # Pick up position
+pick_screw_4 = posx(270, -265.5, 225, 180, -90, 90)             # Pick up position
+pick_screw_5 = posx(280, -265.5, 225, 180, -90, 90)             # Pick up position
+pick_screw_6 = posx(290, -265.5, 225, 180, -90, 90)             # Pick up position
+pick_screw_7 = posx(300, -265.5, 225, 180, -90, 90)             # Pick up position
 place_screw = posx(90, -655, 260, 0, 180, 90)                   # Place position trapezium
 
 # ---- Speed and acceleration parameter ----
@@ -134,7 +140,7 @@ def place_screw_1():
     res, rx_data = server_socket_read(sock)                 # Expecting 'received message'
     rx_msg = rx_data.decode("utf-8")
     print(rx_msg)
-    movel(pick_screw, v=v, a=a)
+    movel(pick_screw_1, v=v, a=a)
     msg = "board.digital[screwdriver].write(0)"             # Deactivate screwdriver
     server_socket_write(sock, msg.encode("utf-8"))
     res, rx_data = server_socket_read(sock)                 # Expecting 'received message'

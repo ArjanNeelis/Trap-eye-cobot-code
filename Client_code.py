@@ -218,7 +218,13 @@ while True:
             print(rx_msg)                                               # Screw placed successfully
             screw_placed = True
         elif magnets_placed and trapezium_placed and screw_placed and not qc_checked:
-            # Vision.Vision()
+            checkVision.capture_photo()
+            checkVision.HVS()
+            p1 =
+            p2 =
+            p3 =
+            p4 =
+            checkVision.pixel(p1,p2,p3,p4)
             qc_checked = True
             print('QC check passed')
         elif magnets_placed and trapezium_placed and screw_placed and qc_checked:
