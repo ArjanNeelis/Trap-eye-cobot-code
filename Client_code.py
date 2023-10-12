@@ -1,7 +1,7 @@
 from DRCF import *
 import pyfirmata
 from pyfirmata import util
-# import Vision
+import checkVision
 
 # ---- Set up client/server ----
 ip = "192.168.127.100"           # Server IP adress (Cobot is "192.168.127.100")
@@ -85,6 +85,9 @@ print(rx_data)
 board.digital[green_LED].write(0)
 
 while True:
+    board.digital[red_LED].write(0)
+    board.digital[green_LED].write(0)
+
     while not start:
         button_state = board.digital[start_button].read()
         if button_state != prev_button_state:
@@ -220,14 +223,18 @@ while True:
         elif magnets_placed and trapezium_placed and screw_placed and not qc_checked:
             checkVision.capture_photo()
             checkVision.HVS()
-            p1 =
-            p2 =
-            p3 =
-            p4 =
-            checkVision.pixel(p1,p2,p3,p4)
-            qc_checked = True
-            print('QC check passed')
-        elif magnets_placed and trapezium_placed and screw_placed and qc_checked:
+            p1 = (800, 490)
+            p2 = (970, 540)
+            p3 = (1210, 490)
+            p4 = (1380, 540)
+            checkVision.pixel(p1, p2, p3, p4)
+            qc_checked = checkVision.check
+            if not checkVision.check:
+                board.digital[red_LED].write(1)
+                print('QC check: Failed')
+            else:
+                board.digital[green_LED].write(1)
+                print('QC check: Passed')
             magnets_placed = False
             trapezium_placed = False
             screw_placed = False
