@@ -223,10 +223,10 @@ while True:
         elif magnets_placed and trapezium_placed and screw_placed and not qc_checked:
             checkVision.capture_photo()
             checkVision.HVS()
-            p1 = (800, 490)
-            p2 = (970, 540)
-            p3 = (1210, 490)
-            p4 = (1380, 540)
+            p1 = (600, 500)
+            p2 = (1000, 800)
+            p3 = (1000, 500)
+            p4 = (1400, 800)
             checkVision.pixel(p1, p2, p3, p4)
             qc_checked = checkVision.check
             if not checkVision.check:
