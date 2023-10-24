@@ -13,7 +13,7 @@ def capture_photo():
 
 captured_photo_path = capture_photo()
 cap = cv2.imread(captured_photo_path)
-cv2.waitKey(0)
+cv2.waitKey(10)
 cv2.destroyAllWindows()
 
 
@@ -120,10 +120,10 @@ def pixel(p1, p2, p3, p4):
 
     print('Number of black pixels magnet 1:', blackPix1)
     print('Number of black pixels magnet 2:', blackPix2)
-    cv2.waitKey(0)
+    cv2.waitKey(10)
     cv2.destroyAllWindows()
 
-    if 10 < blackPix1 < 4500 and 10 < blackPix2 < 4500:
+    if 100 < blackPix1 < 4500 and 100 < blackPix2 < 4500:
         check = True
     else:
         check = False
