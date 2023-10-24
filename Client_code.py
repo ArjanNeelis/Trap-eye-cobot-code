@@ -1,7 +1,7 @@
 from DRCF import *
 import pyfirmata
 from pyfirmata import util
-import checkVision
+# import checkVision
 
 # ---- Set up client/server ----
 ip = "192.168.127.100"           # Server IP adress (Cobot is "192.168.127.100")
@@ -109,9 +109,9 @@ while True:
         trapeye_state = board.digital[trapeye_switch].read()
         start_button_state = board.digital[start_button].read()
         print('Inputs read')
-        wait(1)
+        wait(0.1)
 
-        if magnet_state and not magnets_placed:
+        if not magnet_state and not magnets_placed:
             print('Placing magnet 1...')
             msg = "place_magnet_1()"
             client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
@@ -139,7 +139,7 @@ while True:
             rx_msg = rx_data.decode("utf-8")
             print(rx_msg)                                               # Magnet 1 placed successfully
             magnet_state = board.digital[magnet_switch].read()
-            while not magnet_state:
+            while magnet_state:
                 magnet_state = board.digital[magnet_switch].read()
                 wait(0.5)
             print('Placing magnet 2...')
@@ -191,50 +191,50 @@ while True:
             print('Placing screw...')
             msg = "place_screw_1()"
             client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
-            # res, rx_data = client_socket_read(sock)                     # Receives data from the server
-            # rx_msg = rx_data.decode("utf-8")
-            # exec(rx_msg)                                                # Activate screwdriver
-            # msg = "screwdriver on"
-            # client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
-            # res, rx_data = client_socket_read(sock)                     # Receives data from the server
-            # rx_msg = rx_data.decode("utf-8")
-            # exec(rx_msg)                                                # Activate screwdriver
-            # msg = "screwdriver off"
-            # client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
-            # res, rx_data = client_socket_read(sock)                     # Receives data from the server
-            # rx_msg = rx_data.decode("utf-8")
-            # exec(rx_msg)                                                # Clamping the magnets and trapezium
-            # msg = "Clamping"
-            # client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
-            # res, rx_data = client_socket_read(sock)                     # Receives data from the server
-            # rx_msg = rx_data.decode("utf-8")
-            # exec(rx_msg)                                                # Activate screwdriver
-            # msg = "screwdriver on"
-            # client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
-            # res, rx_data = client_socket_read(sock)                     # Receives data from the server
-            # rx_msg = rx_data.decode("utf-8")
-            # exec(rx_msg)                                                # Activate screwdriver
-            # msg = "screwdriver off"
-            # client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
+            res, rx_data = client_socket_read(sock)                     # Receives data from the server
+            rx_msg = rx_data.decode("utf-8")
+            exec(rx_msg)                                                # Activate screwdriver
+            msg = "screwdriver on"
+            client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
+            res, rx_data = client_socket_read(sock)                     # Receives data from the server
+            rx_msg = rx_data.decode("utf-8")
+            exec(rx_msg)                                                # Activate screwdriver
+            msg = "screwdriver off"
+            client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
+            res, rx_data = client_socket_read(sock)                     # Receives data from the server
+            rx_msg = rx_data.decode("utf-8")
+            exec(rx_msg)                                                # Clamping the magnets and trapezium
+            msg = "Clamping"
+            client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
+            res, rx_data = client_socket_read(sock)                     # Receives data from the server
+            rx_msg = rx_data.decode("utf-8")
+            exec(rx_msg)                                                # Activate screwdriver
+            msg = "screwdriver on"
+            client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
+            res, rx_data = client_socket_read(sock)                     # Receives data from the server
+            rx_msg = rx_data.decode("utf-8")
+            exec(rx_msg)                                                # Activate screwdriver
+            msg = "screwdriver off"
+            client_socket_write(sock, msg.encode("utf-8"))              # Sends data to the server
             res, rx_data = client_socket_read(sock)                     # Receives data from the server
             rx_msg = rx_data.decode("utf-8")
             print(rx_msg)                                               # Screw placed successfully
             screw_placed = True
         elif magnets_placed and trapezium_placed and screw_placed and not qc_checked:
-            checkVision.capture_photo()
-            checkVision.HVS()
-            p1 = (600, 500)
-            p2 = (1000, 800)
-            p3 = (1000, 500)
-            p4 = (1400, 800)
-            checkVision.pixel(p1, p2, p3, p4)
-            qc_checked = checkVision.check
-            if not checkVision.check:
-                board.digital[red_LED].write(1)
-                print('QC check: Failed')
-            else:
-                board.digital[green_LED].write(1)
-                print('QC check: Passed')
+            # checkVision.capture_photo()
+            # checkVision.HVS()
+            # p1 = (600, 500)
+            # p2 = (1000, 800)
+            # p3 = (1000, 500)
+            # p4 = (1400, 800)
+            # checkVision.pixel(p1, p2, p3, p4)
+            # qc_checked = checkVision.check
+            # if not checkVision.check:
+            #    board.digital[red_LED].write(1)
+            #    print('QC check: Failed')
+            # else:
+            #    board.digital[green_LED].write(1)
+            #    print('QC check: Passed')
             magnets_placed = False
             trapezium_placed = False
             screw_placed = False
@@ -242,23 +242,26 @@ while True:
             start = False
             print('TRAP-EYE assembly finished. Remove and place new TRAP-EYE')
         else:
-            if not magnets_placed and not magnet_switch:
-                board.digital[linear_in].write(0)
-                board.digital[linear_out].write(1)
-                while not magnet_switch:
-                    board.digital[magnet_switch].read()
+            if not magnets_placed and magnet_state:
+                print("Supplying magnet")
+                move_linear_out()
+                while magnet_state:
+                    magnet_state = board.digital[magnet_switch].read()
                     print('Waiting for magnet or magnets empty', sep=' ', end='', flush=True)
                     wait(0.1)
                     print(sep=' ', end='\r')
                     wait(1)
-                board.digital[linear_out].write(0)
-                board.digital[linear_in].write(1)
+                move_linear_in()
                 print('Magnet storage empty')
             elif not trapezium_placed and trapezium_state:
                 print('Trapezium storage empty')
                 wait(1)
-            else:
+            elif not trapeye_state:
                 print('TRAP-EYE not placed')
+                start = False
+                wait(1)
+            else:
+                print('Unknown Error')
                 wait(1)
 
-client_socket_close(sock)                   # Closes the socket
+# client_socket_close(sock)                   # Closes the socket
