@@ -1,7 +1,7 @@
 from DRCF import *
 import pyfirmata
 from pyfirmata import util
-# import checkVision
+import checkVision
 
 # ---- Set up client/server ----
 ip = "192.168.127.100"           # Server IP adress (Cobot is "192.168.127.100")
@@ -70,13 +70,12 @@ def move_linear_out():
 
 
 def clamping():
+    board.digital[clamp_servo].write(0)  # Press on the magnets
     print('Clamped')
-    # board.digital[clamp_servo].write(0)         # Press on the magnets
-    # board.digital[clamp_servo].write(39)        # Position for photo background
-    # board.digital[clamp_servo].write(100)       # Retreat to give robot more space
 
 
 # ---- Main code ----
+board.digital[clamp_servo].write(120)               # Retreat to give robot more space
 board.digital[green_LED].write(1)
 msg = "calibration()"
 client_socket_write(sock, msg.encode("utf-8"))      # Sends data to the server
@@ -85,9 +84,6 @@ print(rx_data)
 board.digital[green_LED].write(0)
 
 while True:
-    board.digital[red_LED].write(0)
-    board.digital[green_LED].write(0)
-
     while not start:
         button_state = board.digital[start_button].read()
         if button_state != prev_button_state:
@@ -102,6 +98,9 @@ while True:
         wait(0.1)
         print(sep=' ', end='\r')
         prev_button_state = button_state
+
+    board.digital[red_LED].write(0)
+    board.digital[green_LED].write(0)
 
     while start:
         magnet_state = board.digital[magnet_switch].read()
@@ -221,26 +220,34 @@ while True:
             print(rx_msg)                                               # Screw placed successfully
             screw_placed = True
         elif magnets_placed and trapezium_placed and screw_placed and not qc_checked:
-            # checkVision.capture_photo()
-            # checkVision.HVS()
-            # p1 = (600, 500)
-            # p2 = (1000, 800)
-            # p3 = (1000, 500)
-            # p4 = (1400, 800)
-            # checkVision.pixel(p1, p2, p3, p4)
-            # qc_checked = checkVision.check
-            # if not checkVision.check:
-            #    board.digital[red_LED].write(1)
-            #    print('QC check: Failed')
-            # else:
-            #    board.digital[green_LED].write(1)
-            #    print('QC check: Passed')
+            board.digital[clamp_servo].write(35)                        # Position for photo background
+            wait(2)
+            checkVision.capture_photo()
+            checkVision.HVS()
+            p1 = (600, 500)
+            p2 = (1000, 800)
+            p3 = (1000, 500)
+            p4 = (1400, 800)
+            checkVision.pixel(p1, p2, p3, p4)
+            qc_checked = checkVision.check
+            if not checkVision.check:
+               board.digital[red_LED].write(1)
+               print('QC check: Failed')
+            else:
+               board.digital[green_LED].write(1)
+               print('QC check: Passed')
+            board.digital[clamp_servo].write(120)  # Position for photo background
+            while trapeye_state:
+                trapeye_state = board.digital[trapeye_switch].read()
+                print('TRAP-EYE assembly finished. Remove and place new TRAP-EYE', sep=' ', end='', flush=True)
+                wait(0.1)
+                print(sep=' ', end='\r')
             magnets_placed = False
             trapezium_placed = False
             screw_placed = False
             qc_checked = False
             start = False
-            print('TRAP-EYE assembly finished. Remove and place new TRAP-EYE')
+
         else:
             if not magnets_placed and magnet_state:
                 print("Supplying magnet")

@@ -6,15 +6,15 @@ sock = server_socket_open(port)
 state = server_socket_state(sock)
 
 # ---- Coordinates for pick and place magnets ----
-approach_magnet_1 = posx(349, -298, 400, 0, 180, 90)          # Above magnet storage
+approach_magnet_1 = posx(348.5, -298, 400, 0, 180, 90)        # Above magnet storage
 approach_magnet_2 = posx(-15, -561, 400, 0, -150, 0)          # Above magnet place 1 angled
 approach_magnet_3 = posx(-15.5, -646, 400, 0, -150, 0)        # Above magnet place 2 angled
-approach_magnet_4 = posx(349, -133, 400, 0, 180, 90)          # Move away at an angle
-pick_magnet = posx(349, -298, 114, 0, 180, 90)                # Pick up position
-place_position_1a = posx(-14.5, -559, 350, 0, -150, 0)          # Place position 1st magnet
-place_position_1b = posx(-14.5, -558, 350, 0, -150, 0)          # Place position 1st magnet
-place_position_2a = posx(-15.5, -644, 353, 0, -150, 0)        # Place position 2nd magnet
-place_position_2b = posx(-15.5, -645, 353, 0, -150, 0)        # Place position 2nd magnet
+approach_magnet_4 = posx(348.5, -137, 400, 0, 180, 90)        # Move away at an angle
+pick_magnet = posx(348.5, -302, 117, 0, 180, 90)              # Pick up position
+place_position_1a = posx(-14, -559, 350, 0, -150, 0)          # Place position 1st magnet
+place_position_1b = posx(-14, -558, 350, 0, -150, 0)          # Place position 1st magnet
+place_position_2a = posx(-15, -644, 353, 0, -150, 0)        # Place position 2nd magnet
+place_position_2b = posx(-15, -645, 353, 0, -150, 0)        # Place position 2nd magnet
 
 # ---- Coordinates for pick and place trapezium ----
 approach_trapezium_1 = posx(253, -344, 400, 0, 180, 90)             # Above trapezium storage
@@ -27,12 +27,10 @@ global screw
 screw = 241.5                                                               # Always start with picking screw 1
 approach_screw_1 = posj(104.04, -7.73, -95.47, 180.0, 76.80, 14.04)         # Start position
 approach_screw_2 = posj(86.14, -13.48, -110.15, 267.86, 93.21, -213.69)     # Rotated tool
-approach_screw_3 = posx(screw, -265.5, 350, 180, -90, 90)                   # Above screw feeder
 approach_screw_4 = posx(-220, -400, 243, 0, 180, 90)                        # Move around TRAP-EYE
 approach_screw_5 = posx(-220, -689, 243, 0, 180, 90)                        # Move around TRAP-EYE
 approach_screw_6 = posx(-158, -689, 243, 0, 180, 90)                        # Line up with screw hole
-pick_screw_1 = posx(screw, -265.5, 192, 180, -90, 90)                       # Pick up position
-pick_screw_2 = posx(screw, -265.5, 187.5, 180, -90, 90)                     # Pick up position
+
 place_screw = posx(-143, -688, 243, 0, 180, 90)                             # Place position trapezium
 
 # ---- Speed and acceleration parameter ----
@@ -169,17 +167,21 @@ def place_screw_1():
     print(rx_msg)
     movel(approach_screw_5, v=v, a=a)
     movel(approach_screw_4, v=v, a=a)
-    screw += 10
 
 
 def calibration():
     pass
-    # movej(posj(0.0, 0.0, 0.0, 0.0, 0.0, 0.0), v=v, a=a)      # Home position needed for accuracy calibration
-    # movej(posj(139.4, -13.7, -88.2, 180.0, 78.1, 49.4), v=v, a=a)    # First position after calibration
+    # movej(posj(0.0, 0.0, 0.0, 0.0, 0.0, 0.0), v=v, a=a)               # Home position needed for accuracy calibration
+    # movej(posj(139.4, -13.7, -88.2, 180.0, 78.1, 49.4), v=v, a=a)     # First position after calibration
 
 
 # ---- Main code ----
 while True:
+    # ---- Inside loop to update screw variable ----
+    approach_screw_3 = posx(screw, -265.5, 350, 180, -90, 90)       # Above screw feeder
+    pick_screw_1 = posx(screw, -265.5, 192, 180, -90, 90)           # Pick up position
+    pick_screw_2 = posx(screw, -265.5, 187.5, 180, -90, 90)         # Pick up position
+    # ----------------------------------------------
     res, rx_data = server_socket_read(sock)     # Receives data from the server
     command = rx_data.decode("utf-8")
     if command == "place_magnet_1()":
@@ -200,6 +202,7 @@ while True:
     elif command == "place_screw_1()":
         exec(command)
         wait(0.1)
+        screw += 10
         msg = "Trapezium placed successfully"
         server_socket_write(sock, msg.encode("utf-8"))
     elif command == "calibration()":
