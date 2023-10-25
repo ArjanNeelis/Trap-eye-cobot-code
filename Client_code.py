@@ -224,10 +224,10 @@ while True:
             wait(2)
             checkVision.capture_photo()
             checkVision.HVS()
-            p1 = (600, 500)
-            p2 = (1000, 800)
-            p3 = (1000, 500)
-            p4 = (1400, 800)
+            p1 = (700, 500)
+            p2 = (1050, 700)
+            p3 = (1100, 500)
+            p4 = (1400, 700)
             checkVision.pixel(p1, p2, p3, p4)
             qc_checked = checkVision.check
             if not checkVision.check:

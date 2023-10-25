@@ -3,7 +3,7 @@ import numpy as np
 
 
 def capture_photo():
-    cap = cv2.VideoCapture(2)  # 2 for real sense
+    cap = cv2.VideoCapture(1)  # 1 or 2 for real sense
     ret, frame = cap.read()
     cap.release()
     cv2.imwrite("captured_photo.jpg", frame)
@@ -123,7 +123,7 @@ def pixel(p1, p2, p3, p4):
     cv2.waitKey(10)
     cv2.destroyAllWindows()
 
-    if 100 < blackPix1 < 4500 and 100 < blackPix2 < 4500:
+    if 500 < blackPix1 < 3000 and 500 < blackPix2 < 3000:   # Pixel value of 1 magnet between 750 and 2500
         check = True
     else:
         check = False
