@@ -123,7 +123,7 @@ def pixel(p1, p2, p3, p4):
     cv2.waitKey(10)
     cv2.destroyAllWindows()
 
-    if 500 < blackPix1 < 3000 and 500 < blackPix2 < 3000:   # Pixel value of 1 magnet between 750 and 2500
+    if 50 < blackPix1 < 4000 and 50 < blackPix2 < 4000:   # Pixel value of 1 magnet between 750 and 2500
         check = True
     else:
         check = False

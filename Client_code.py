@@ -23,8 +23,9 @@ trapeye_switch = 8
 start_button = 9
 vacuum_pump = 10
 screwdriver = 11
-red_LED = 12
-green_LED = 13
+# red_LED = 12
+# green_LED = 13
+white_LED = 12
 
 board.digital[linear_in].mode = pyfirmata.OUTPUT       # Linear actuator
 board.digital[linear_speed].mode = pyfirmata.PWM        # Linear actuator (PWM)
@@ -38,6 +39,7 @@ board.digital[vacuum_pump].mode = pyfirmata.OUTPUT      # Vacuum pump
 board.digital[screwdriver].mode = pyfirmata.OUTPUT      # Screwdriver
 board.digital[red_LED].mode = pyfirmata.OUTPUT          # status LED
 board.digital[green_LED].mode = pyfirmata.OUTPUT        # status LED
+board.analog[white_LED].mode = pyfirmata.OUTPUT         # white LED for photo
 
 it = util.Iterator(board)
 it.start()
@@ -76,12 +78,12 @@ def clamping():
 
 # ---- Main code ----
 board.digital[clamp_servo].write(120)               # Retreat to give robot more space
-board.digital[green_LED].write(1)
+# board.digital[green_LED].write(1)
 msg = "calibration()"
 client_socket_write(sock, msg.encode("utf-8"))      # Sends data to the server
 res, rx_data = client_socket_read(sock)             # Receives data from the server
 print(rx_data)
-board.digital[green_LED].write(0)
+# board.digital[green_LED].write(0)
 
 while True:
     while not start:
@@ -99,8 +101,8 @@ while True:
         print(sep=' ', end='\r')
         prev_button_state = button_state
 
-    board.digital[red_LED].write(0)
-    board.digital[green_LED].write(0)
+    # board.digital[red_LED].write(0)
+    # board.digital[green_LED].write(0)
 
     while start:
         magnet_state = board.digital[magnet_switch].read()
@@ -221,21 +223,23 @@ while True:
             screw_placed = True
         elif magnets_placed and trapezium_placed and screw_placed and not qc_checked:
             board.digital[clamp_servo].write(35)                        # Position for photo background
+            board.digital[white_LED].write(1)
             wait(2)
             checkVision.capture_photo()
             checkVision.HVS()
             p1 = (700, 500)
-            p2 = (1050, 700)
+            p2 = (950, 700)
             p3 = (1100, 500)
-            p4 = (1400, 700)
+            p4 = (1350, 700)
             checkVision.pixel(p1, p2, p3, p4)
             qc_checked = checkVision.check
             if not checkVision.check:
-               board.digital[red_LED].write(1)
+               # board.digital[red_LED].write(1)
                print('QC check: Failed')
             else:
-               board.digital[green_LED].write(1)
+               # board.digital[green_LED].write(1)
                print('QC check: Passed')
+            board.digital[white_LED].write(0)
             board.digital[clamp_servo].write(120)  # Position for photo background
             while trapeye_state:
                 trapeye_state = board.digital[trapeye_switch].read()
