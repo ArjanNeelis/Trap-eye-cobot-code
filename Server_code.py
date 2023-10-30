@@ -13,29 +13,28 @@ approach_magnet_4 = posx(349, -137, 400, 0, 180, 90)            # Move away at a
 pick_magnet = posx(349, -303, 116, 0, 180, 90)                  # Pick up position
 place_position_1a = posx(-13, -559.5, 351, 0, -150, 0)          # Place position 1st magnet
 place_position_1b = posx(-13, -558.5, 351, 0, -150, 0)          # Place position 1st magnet
-place_position_2a = posx(-14, -644.5, 352, 0, -150, 0)          # Place position 2nd magnet
-place_position_2b = posx(-14, -645.5, 352, 0, -150, 0)          # Place position 2nd magnet
+place_position_2a = posx(-14, -645, 352, 0, -150, 0)            # Place position 2nd magnet
+place_position_2b = posx(-14, -646, 352, 0, -150, 0)            # Place position 2nd magnet
 
 # ---- Coordinates for pick and place trapezium ----
 approach_trapezium_1 = posx(247, -338, 400, 0, 180, 90)             # Above trapezium storage
-approach_trapezium_2 = posx(-5.5, -603.5, 400, 0, -150, 0)            # Above trapezium place
+approach_trapezium_2 = posx(-5.5, -603.5, 400, 0, -150, 0)          # Above trapezium place
 pick_trapezium = posx(247, -338, 152.5, 0, 180, 90)                 # Pick up position
-place_trapezium = posx(-5.5, -603.5, 351, 0, -150, 0)                 # Place position trapezium
+place_trapezium = posx(-5.5, -603.5, 351, 0, -150, 0)               # Place position trapezium
 
 # ---- Coordinates for pick and place screw ----
 global screw
 screw = 239.5                                                               # Always start with picking screw 1
 approach_screw_1 = posj(104.04, -7.73, -95.47, 180.0, 76.80, 14.04)         # Start position
 approach_screw_2 = posj(86.14, -13.48, -110.15, 267.86, 93.21, -213.69)     # Rotated tool
-approach_screw_4 = posx(-220, -400, 245, 0, 180, 90)                        # Move around TRAP-EYE
-approach_screw_5 = posx(-220, -687, 245, 0, 180, 90)                        # Move around TRAP-EYE
-approach_screw_6 = posx(-158, -687, 245, 0, 180, 90)                        # Line up with screw hole
-
-place_screw = posx(-145, -687, 245, 0, 180, 90)                             # Place position trapezium
+approach_screw_4 = posx(-230, -400, 244, 0, 180, 90)                        # Move around TRAP-EYE
+approach_screw_5 = posx(-230, -688, 244, 0, 180, 90)                  # Move around TRAP-EYE
+approach_screw_6 = posx(-190, -688, 244, 0, 180, 90)                  # Line up with screw hole
+place_screw = posx(-175, -688, 244, 0, 180, 90)                       # Place position trapezium
 
 # ---- Speed and acceleration parameter ----
-v = 100
-a = 50
+v = 600
+a = 300
 
 # ---- timers for stuff ----
 suck_time = 2       # Number of seconds to wait after (de)activating the vacuum pump
@@ -57,14 +56,14 @@ def place_magnet_1():
     print(rx_msg)
     wait(suck_time)
     movel(approach_magnet_4, v=v, a=a)
+    movel(approach_magnet_2, v=v, a=a)
     msg = "move_linear_out()"                               # Extend linear actuator
     server_socket_write(sock, msg.encode("utf-8"))
     res, rx_data = server_socket_read(sock)                 # Expecting 'received message'
     rx_msg = rx_data.decode("utf-8")
     print(rx_msg)
-    movel(approach_magnet_2, v=v, a=a)
-    movel(place_position_1a, v=v, a=a)
-    movel(place_position_1b, v=v, a=a)
+    movel(place_position_1a, v=100, a=50)
+    movel(place_position_1b, v=100, a=50)
     msg = "board.digital[vacuum_pump].write(0)"             # Deactivate suction cup
     server_socket_write(sock, msg.encode("utf-8"))
     res, rx_data = server_socket_read(sock)                 # Expecting 'received message'
@@ -89,14 +88,14 @@ def place_magnet_2():
     print(rx_msg)
     wait(suck_time)
     movel(approach_magnet_4, v=v, a=a)
+    movel(approach_magnet_3, v=v, a=a)
     msg = "move_linear_out()"                               # Extend linear actuator
     server_socket_write(sock, msg.encode("utf-8"))
     res, rx_data = server_socket_read(sock)                 # Expecting 'received message'
     rx_msg = rx_data.decode("utf-8")
     print(rx_msg)
-    movel(approach_magnet_3, v=v, a=a)
-    movel(place_position_2a, v=v, a=a)
-    movel(place_position_2b, v=v, a=a)
+    movel(place_position_2a, v=100, a=50)
+    movel(place_position_2b, v=100, a=50)
     msg = "board.digital[vacuum_pump].write(0)"             # Deactivate suction cup
     server_socket_write(sock, msg.encode("utf-8"))
     res, rx_data = server_socket_read(sock)                 # Expecting 'received message'
@@ -117,7 +116,7 @@ def place_trapezium_1():
     wait(suck_time)
     movel(approach_trapezium_1, v=v, a=a)
     movel(approach_trapezium_2, v=v, a=a)
-    movel(place_trapezium, v=v, a=a)
+    movel(place_trapezium, v=100, a=50)
     msg = "board.digital[vacuum_pump].write(0)"             # Deactivate suction cup
     server_socket_write(sock, msg.encode("utf-8"))
     res, rx_data = server_socket_read(sock)                 # Expecting 'received message'
@@ -129,7 +128,7 @@ def place_trapezium_1():
 
 def place_screw_1():
     movej(approach_screw_1, v=v, a=a)
-    movej(approach_screw_2, v=v, a=a)
+    movej(approach_screw_2, v=100, a=50)
     movel(approach_screw_3, v=v, a=a)
     movel(pick_screw_1, v=v, a=a)
     msg = "board.digital[screwdriver].write(1)"             # Activate screwdriver
@@ -144,7 +143,7 @@ def place_screw_1():
     rx_msg = rx_data.decode("utf-8")
     print(rx_msg)
     movel(approach_screw_3, v=v, a=a)
-    movej(approach_screw_1, v=v, a=a)
+    movej(approach_screw_1, v=300, a=150)                  # Fixed speed to not lose screw
     movel(approach_screw_4, v=v, a=a)
     movel(approach_screw_5, v=v, a=a)
     msg = "clamping()"
@@ -158,7 +157,7 @@ def place_screw_1():
     res, rx_data = server_socket_read(sock)                 # Expecting 'received message'
     rx_msg = rx_data.decode("utf-8")
     print(rx_msg)
-    movel(place_screw, v=5, a=a)
+    movel(place_screw, v=7.5, a=a)
     wait(screw_time)                                        # Make sure the screw is tight with slip clutch
     msg = "board.digital[screwdriver].write(0)"             # Deactivate screwdriver
     server_socket_write(sock, msg.encode("utf-8"))
@@ -167,7 +166,7 @@ def place_screw_1():
     print(rx_msg)
     movel(approach_screw_5, v=v, a=a)
     movel(approach_screw_4, v=v, a=a)
-    movej(approach_screw_1, v=v, a=a)
+    movej(approach_screw_1, v=200, a=100)
 
 
 def calibration():
@@ -180,8 +179,8 @@ def calibration():
 while True:
     # ---- Inside loop to update screw variable ----
     approach_screw_3 = posx(screw, -266.5, 350, 180, -90, 90)       # Above screw feeder
-    pick_screw_1 = posx(screw, -266.5, 196, 180, -90, 90)           # Pick up position
-    pick_screw_2 = posx(screw, -266.5, 191, 180, -90, 90)           # Pick up position
+    pick_screw_1 = posx(screw, -266.5, 225, 180, -90, 90)           # Pick up position
+    pick_screw_2 = posx(screw, -266.5, 220, 180, -90, 90)           # Pick up position
     # ----------------------------------------------
     res, rx_data = server_socket_read(sock)     # Receives data from the server
     command = rx_data.decode("utf-8")
