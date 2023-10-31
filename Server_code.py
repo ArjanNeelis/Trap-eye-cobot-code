@@ -13,8 +13,8 @@ approach_magnet_4 = posx(349, -137, 400, 0, 180, 90)            # Move away at a
 pick_magnet = posx(349, -303, 116, 0, 180, 90)                  # Pick up position
 place_position_1a = posx(-13, -559.5, 351, 0, -150, 0)          # Place position 1st magnet
 place_position_1b = posx(-13, -558.5, 351, 0, -150, 0)          # Place position 1st magnet
-place_position_2a = posx(-14, -645, 352, 0, -150, 0)            # Place position 2nd magnet
-place_position_2b = posx(-14, -646, 352, 0, -150, 0)            # Place position 2nd magnet
+place_position_2a = posx(-14.5, -645, 352, 0, -150, 0)          # Place position 2nd magnet
+place_position_2b = posx(-14.5, -646, 352, 0, -150, 0)          # Place position 2nd magnet
 
 # ---- Coordinates for pick and place trapezium ----
 approach_trapezium_1 = posx(247, -338, 400, 0, 180, 90)             # Above trapezium storage
@@ -128,7 +128,7 @@ def place_trapezium_1():
 
 def place_screw_1():
     movej(approach_screw_1, v=v, a=a)
-    movej(approach_screw_2, v=100, a=50)
+    movej(approach_screw_2, v=v, a=a)
     movel(approach_screw_3, v=v, a=a)
     movel(pick_screw_1, v=v, a=a)
     msg = "board.digital[screwdriver].write(1)"             # Activate screwdriver
@@ -143,7 +143,7 @@ def place_screw_1():
     rx_msg = rx_data.decode("utf-8")
     print(rx_msg)
     movel(approach_screw_3, v=v, a=a)
-    movej(approach_screw_1, v=300, a=150)                  # Fixed speed to not lose screw
+    movej(approach_screw_1, v=v, a=a)                  # Fixed speed to not lose screw
     movel(approach_screw_4, v=v, a=a)
     movel(approach_screw_5, v=v, a=a)
     msg = "clamping()"
@@ -203,6 +203,8 @@ while True:
         exec(command)
         wait(0.1)
         screw += 10
+        if screw == 309.5:
+            screw = 239.5
         msg = "Screw placed successfully"
         server_socket_write(sock, msg.encode("utf-8"))
     elif command == "calibration()":

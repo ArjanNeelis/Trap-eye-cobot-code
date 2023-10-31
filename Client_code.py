@@ -223,7 +223,7 @@ while True:
         elif magnets_placed and trapezium_placed and screw_placed and not qc_checked:
             board.digital[clamp_servo].write(35)                        # Position for photo background
             board.digital[white_LED].write(1)
-            wait(2)
+            wait(1)
             checkVision.capture_photo()
             checkVision.HVS()
             p1 = (710, 550)
